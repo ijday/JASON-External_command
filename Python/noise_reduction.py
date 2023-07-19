@@ -1,12 +1,39 @@
 #! /usr/bin/env python
 
-# A script to read HDF5 files from Jason and plot a spectrum with Matplotlib.
-# A t1-noise reduction algorithm is then applied, 
-# taken from J. Biomol. NMR, 2 (1992) 485-494
+# ------------------------------------------------------------------------------- 
+# --
+# -- JEOL Ltd.
+# -- 1-2 Musashino 3-Chome
+# -- Akishima Tokyo 196-8558 Japan 
+# -- Copyright 2022 
+# -- 
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# 
+#     http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+# --++--------------------------------------------------------------------------- 
+# -- 
+# -- ModuleName : noise_reduction.py
+# -- ModuleType : Example external command script for JASON 
+# -- Purpose : Remove t1 noise via external data processing in JASON 
+# -- Date : February 2022 
+# -- Author : Iain J. Day
+# -- Language : Python
+# -- 
+# --##---------------------------------------------------------------------------
+#
+# A script apply t1-noise reduction algorithm as an external command in JASON 
+# algorithm is from J. Biomol. NMR, 2 (1992) 485-494
 # 
 # NOTE: data must be baseline corrected prior to use
-#
-# IJD, 1/2/22
 
 import sys
 import h5py
@@ -37,13 +64,6 @@ real_spec = f['JasonDocument/DataPoints/0'][()]
 npts = real_spec.shape
 
 t1red_spec = np.zeros(npts)
-
-
-# Get some parameters associated with the spectrum from the HDF5 file
-
-sw = f['JasonDocument/SpecInfo'].attrs['SW']
-spec_freq = f['JasonDocument/SpecInfo'].attrs['SpectrometerFrequencies']
-spec_ref = f['JasonDocument/SpecInfo'].attrs['SpectrumRef']
 
 
 # Begin the ANI (Average NoIse) routine
