@@ -37,6 +37,9 @@
 #     use the -g flag to set the Gaussian line width (default inf Hz)
 #     use the -r flag to set the reference signal position in PPM (default 0.0 ppm)
 #     use the -w flag to set the width of the reference signal in Hz (default 100.0 Hz)
+#     use the -s flag to take into account satellites with the following two properties (default is false, no value given just use as -s)
+#     use the -j flag to set the value of the heteronuclear J coupling for satellite of reference signal (default 6.6 Hz TMS)
+#     use the -a flag to set the abundance of the heteronucleus for satellite of reference signal (default 4.67 Hz for 29Si)
 #
 #  Set "Data file" to "Spectrum as JJH5"
 #
@@ -68,6 +71,12 @@ parser.add_argument("-g", "--ghz", action="store", type=float, default=np.inf)
 parser.add_argument("-r", "--refpos", action="store", type=float, default=0.0)
 # reference region width to use in Hz
 parser.add_argument("-w", "--width", action="store", type=float, default=100.0)
+# use satellite doublet for reference signal
+parser.add_argument("-s", "--sat", action="store_true")
+# heteronuclear J-coupling of reference signal 
+parser.add_argument("-j", "--jxy", action="store", type=float, default=6.6)
+# abundance of reference satellite in % 
+parser.add_argument("-a", "--abundance", action="store", type=float, default=4.67)
 
 args = parser.parse_args()
 
@@ -128,8 +137,10 @@ omega = 0.5 * sw * sfrq - (RDcentre - sp) * sfrq
 t = np.linspace(0, 0.5*at, npts//2)
 reffid = np.exp(1j * 2.0 * np.pi * omega * t)
 
-reffid = reffid * np.exp(-t * np.pi * args.lhz - (t / args.ghz)**2)
+if args.sat:
+        reffid = reffid + args.abundance/200.0*np.exp(1j * 2.0 * np.pi * (omega + args.jxy/2.0) * t) + args.abundance/200.0*np.exp(1j * 2.0 * np.pi * (omega - args.jxy/2.0) * t)
 
+reffid = reffid * np.exp(-t * np.pi * args.lhz - (t / args.ghz)**2)
 
 # Create the correction fid
 
