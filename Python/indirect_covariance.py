@@ -10,16 +10,16 @@
 #
 # --++--------------------------------------------------------------------------- 
 # -- 
-# -- ModuleName : direct_covariance.py
+# -- ModuleName : indirect_covariance.py
 # -- ModuleType : Example external command script for JASON 
-# -- Purpose : Direct Covariance processing via external data processing in JASON 
+# -- Purpose : Indirect Covariance processing via external data processing in JASON 
 # -- Date : Oct 2024
 # -- Author : Iain J. Day
 # -- Language : Python
 # -- 
 # --##---------------------------------------------------------------------------
 #
-# This script implements direct covariance processing of a 2D dataset
+# This script implements indirect covariance processing of a 2D dataset
 #
 # How to use:
 #  In JASON, add "Compress" and "External command" to the processing list
@@ -33,7 +33,7 @@
 #
 #   Set "arguments" to the path of the script, specifying the use of a temporary 
 #   file
-#     (e.g. "C:\Users\<username>\.jason\externalNMRProcessing\python\direct_covariance.py -f $TMPFILE")
+#     (e.g. "C:\Users\<username>\.jason\externalNMRProcessing\python\indirect_covariance.py -f $TMPFILE")
 #     use the -n (--nosqrt) flag to not perform the matrix square root operation, which is typically quite slow
 #     
 #  Set "Data file" to "Spectrum as JJH5"
@@ -75,10 +75,10 @@ spec_freq = f['JasonDocument/SpecInfo'].attrs['SpectrometerFrequencies']
 spec_ref = f['JasonDocument/SpecInfo'].attrs['SpectrumRef']
 
 
-# Calculate the direct covariance, sqrt(S.T*S)
+# Calculate the indirect covariance, sqrt(S*S.T)
 #  note that sqrtm from SciPy is quite slow (2k x 2k takes ~30s)
 
-covar = np.dot(dataset.T, dataset)
+covar = np.dot(dataset, dataset.T)
 
 if args.nosqrt:
     covar = sqrtm(covar)
@@ -87,10 +87,10 @@ if args.nosqrt:
 
 # Update parameters
 
-length[1] = covar.shape[0]
-sw[1] = sw[0]
-spec_freq[1] = spec_freq[0]
-spec_ref[1] = spec_ref[0]
+length[0] = covar.shape[1]
+sw[0] = sw[1]
+spec_freq[0] = spec_freq[1]
+spec_ref[0] = spec_ref[1]
 f['JasonDocument/'].attrs.modify('Length', length)
 f['JasonDocument/SpecInfo'].attrs.modify('SW', sw)
 f['JasonDocument/SpecInfo'].attrs.modify('SpectrometerFrequencies', spec_freq)
