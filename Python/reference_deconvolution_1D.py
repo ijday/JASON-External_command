@@ -10,7 +10,7 @@
 #
 # --++--------------------------------------------------------------------------- 
 # -- 
-# -- ModuleName : reference_deconvolution_1D.py
+# -- ModuleName : noise_reduction.py
 # -- ModuleType : Example external command script for JASON 
 # -- Purpose : Reference deconvolution via external data processing in JASON 
 # -- Date : August 2023
