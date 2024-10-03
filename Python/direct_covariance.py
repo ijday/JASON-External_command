@@ -18,6 +18,28 @@
 # -- Language : Python
 # -- 
 # --##---------------------------------------------------------------------------
+#
+# This script implements direct covariance processing of a 2D dataset
+#
+# How to use:
+#  In JASON, add "Compress" and "External command" to the processing list
+#
+#  The Compress item is required to remove all imaginary components prior to covariance processing
+# 
+#  Set for external command parameters:
+#
+#   Set "cmd" to "python" or to the full path to python.exe 
+#     (e.g. C:\Program Files\Python311\python.exe)
+#
+#   Set "arguments" to the path of the script, specifying the use of a temporary 
+#   file
+#     (e.g. "C:\Users\<username>\.jason\externalNMRProcessing\python\jasonParEdit.py -f $TMPFILE")
+#     use the -n (--nosqrt) flag to not perform the matrix square root operation, which is typically quite slow
+#     
+#  Set "Data file" to "Spectrum as JJH5"
+#
+# Press "Apply"
+#
 
 import sys
 import h5py
@@ -54,7 +76,8 @@ spec_freq = f['JasonDocument/SpecInfo'].attrs['SpectrometerFrequencies']
 spec_ref = f['JasonDocument/SpecInfo'].attrs['SpectrumRef']
 
 
-# Calculate the direct covariance (S.T . S)
+# Calculate the direct covariance, sqrt(S.T*S)
+#  note that sqrtm from SciPy is quite slow (2k x 2k takes ~30s)
 
 covar = np.dot(dataset.T, dataset)
 
