@@ -85,6 +85,11 @@ elif (args.mode == 'max'):
     dataset_imag = dataset_imag / np.max(dataset_imag)
     print('Dataset changed')
 
+elif (args.mode == 'percentage'):
+    dataset_real = 100.0 * dataset_real / np.max(dataset_real)
+    dataset_imag = 100.0 * dataset_imag / np.max(dataset_imag)
+    print('Dataset changed')
+
 elif (args.mode == 'scale'):
     dataset_real = dataset_real * args.value
     dataset_imag = dataset_imag * args.value
